@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ParkingLot {
-    constructor() {
+    constructor(location, ticketCalculator) {
         this.tickets = [];
+        this.location = location;
+        this.ticketCalculator = ticketCalculator;
     }
     checkin(plate, checkingDate) {
         this.tickets.push({ plate, checkingDate });
@@ -11,9 +13,7 @@ class ParkingLot {
         const ticket = this.tickets.find(ticket => ticket.plate === plate);
         if (!ticket)
             throw Error('Ticket not found');
-        const period = (checkoutDate.getTime() - ticket.checkingDate.getTime()) /
-            (1000 * 60 * 60);
-        const amount = period * 5;
+        let amount = this.ticketCalculator.calculate(ticket.checkingDate, checkoutDate);
         return { amount };
     }
 }

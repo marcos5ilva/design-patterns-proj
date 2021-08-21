@@ -1,7 +1,14 @@
+import TicketCalculator from './TicketCalculator';
+
 export default class ParkingLot {
 	tickets: { plate: string; checkingDate: Date }[];
-	constructor() {
+	location: string;
+	ticketCalculator: TicketCalculator;
+
+	constructor(location: string, ticketCalculator: TicketCalculator) {
 		this.tickets = [];
+		this.location = location;
+		this.ticketCalculator = ticketCalculator;
 	}
 
 	checkin(plate: string, checkingDate: Date) {
@@ -11,10 +18,10 @@ export default class ParkingLot {
 	checkout(plate: string, checkoutDate: Date) {
 		const ticket = this.tickets.find(ticket => ticket.plate === plate);
 		if (!ticket) throw Error('Ticket not found');
-		const period =
-			(checkoutDate.getTime() - ticket.checkingDate.getTime()) /
-			(1000 * 60 * 60);
-		const amount = period * 5;
+		let amount = this.ticketCalculator.calculate(
+			ticket.checkingDate,
+			checkoutDate
+		);
 		return { amount };
 	}
 }
